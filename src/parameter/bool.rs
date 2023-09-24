@@ -10,6 +10,16 @@ pub enum BoolValueFactory {
     Choice(Choice<bool>),
 }
 
+impl BoolValueFactory {
+    pub fn scala(x: bool) -> Self {
+        Self::Scala(x)
+    }
+
+    pub fn choice() -> Self {
+        Self::Choice(Choice(true))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum BoolFormatter {

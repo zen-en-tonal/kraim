@@ -12,6 +12,24 @@ pub enum FloatValueFactory {
     Powerset(Powerset<f32>),
 }
 
+impl FloatValueFactory {
+    pub fn scala(x: f32) -> Self {
+        Self::Scala(x)
+    }
+
+    pub fn choice(x: Vec<f32>) -> Self {
+        Self::Choice(Choice(x))
+    }
+
+    pub fn between(from: f32, to: f32, step: f32) -> Self {
+        Self::Between(Between::new(from, to, step))
+    }
+
+    pub fn powerset(x: Vec<f32>) -> Self {
+        Self::Powerset(Powerset::new(x))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct FloatFormatter(String);

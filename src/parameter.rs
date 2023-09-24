@@ -68,6 +68,36 @@ pub enum Value {
     Date(Placeholder<DateValueFactory, DateFormatter>),
 }
 
+impl Value {
+    pub fn bool(factory: BoolValueFactory) -> Self {
+        Value::Bool(Placeholder::new(factory, None))
+    }
+
+    pub fn bool_with_format(factory: BoolValueFactory, format: BoolFormatter) -> Self {
+        Value::Bool(Placeholder::new(factory, Some(format)))
+    }
+
+    pub fn string(factory: StringValueFactory) -> Self {
+        Value::String(Placeholder::new(factory, None))
+    }
+
+    pub fn int(factory: IntValueFactory) -> Self {
+        Value::Int(Placeholder::new(factory, None))
+    }
+
+    pub fn float(factory: FloatValueFactory) -> Self {
+        Value::Float(Placeholder::new(factory, None))
+    }
+
+    pub fn date(factory: DateValueFactory) -> Self {
+        Value::Date(Placeholder::new(factory, None))
+    }
+
+    pub fn date_with_format(factory: DateValueFactory, format: DateFormatter) -> Self {
+        Value::Date(Placeholder::new(factory, Some(format)))
+    }
+}
+
 impl IntoIterator for Value {
     type Item = String;
 
@@ -147,7 +177,7 @@ where
 #[cfg(test)]
 mod tests {
 
-    use crate::parameter::{bool::BoolValueFactory, Placeholder, Powerset, Value};
+    use crate::parameter::{bool::BoolValueFactory, Powerset, Value};
 
     use super::{string::StringValueFactory, QueryParameter};
 
@@ -168,10 +198,7 @@ mod tests {
     fn serialize_date() {
         let date = QueryParameter {
             key: String::from("key"),
-            value: Value::Bool(Placeholder {
-                factory: BoolValueFactory::Scala(true),
-                format: None,
-            }),
+            value: Value::bool(BoolValueFactory::scala(true)),
         };
         println!("{}", serde_json::to_string(&date).unwrap())
     }
@@ -180,14 +207,11 @@ mod tests {
     fn parameter() {
         let p = QueryParameter::new(
             "key",
-            Value::String(Placeholder {
-                factory: StringValueFactory::choice(&vec![
-                    String::from("a"),
-                    String::from("b"),
-                    String::from("c"),
-                ]),
-                format: None,
-            }),
+            Value::string(StringValueFactory::choice(&vec![
+                String::from("a"),
+                String::from("b"),
+                String::from("c"),
+            ])),
         );
         let mut iter = p.into_iter();
         assert_eq!(iter.next(), Some((String::from("key"), String::from("a"))));

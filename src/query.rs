@@ -88,27 +88,24 @@ mod tests {
         let mut p = HashMap::default();
         p.insert(
             String::from("id"),
-            Value::Int(Placeholder::new(
-                IntValueFactory::Between(Between::new(1, 2, 1)),
-                None,
-            )),
+            Value::int(IntValueFactory::between(1, 2, 1)),
         );
         let q = Query {
             url: String::from("http://example.com/{id}"),
             query: vec![
                 QueryParameter::new(
                     "filter[foo][]",
-                    Value::String(Placeholder::new(
-                        StringValueFactory::choice(&vec![String::from("a"), String::from("b")]),
-                        None,
-                    )),
+                    Value::string(StringValueFactory::choice(&vec![
+                        String::from("a"),
+                        String::from("b"),
+                    ])),
                 ),
                 QueryParameter::new(
                     "filter[bar][]",
-                    Value::String(Placeholder::new(
-                        StringValueFactory::choice(&vec![String::from("a"), String::from("b")]),
-                        None,
-                    )),
+                    Value::string(StringValueFactory::choice(&vec![
+                        String::from("a"),
+                        String::from("b"),
+                    ])),
                 ),
             ],
             param: p,

@@ -12,6 +12,24 @@ pub enum IntValueFactory {
     Powerset(Powerset<i32>),
 }
 
+impl IntValueFactory {
+    pub fn scala(x: i32) -> Self {
+        Self::Scala(x)
+    }
+
+    pub fn choice(x: Vec<i32>) -> Self {
+        Self::Choice(Choice(x))
+    }
+
+    pub fn between(from: i32, to: i32, step: usize) -> Self {
+        Self::Between(Between::new(from, to, step))
+    }
+
+    pub fn powerset(x: Vec<i32>) -> Self {
+        Self::Powerset(Powerset::new(x))
+    }
+}
+
 impl<S: Into<usize>> IntoIterator for Between<i32, S> {
     type Item = i32;
 

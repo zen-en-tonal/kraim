@@ -13,6 +13,24 @@ pub enum DateValueFactory {
     Powerset(Powerset<NaiveDate>),
 }
 
+impl DateValueFactory {
+    pub fn scala(x: NaiveDate) -> Self {
+        Self::Scala(x)
+    }
+
+    pub fn choice(x: Vec<NaiveDate>) -> Self {
+        Self::Choice(Choice(x))
+    }
+
+    pub fn between(from: NaiveDate, to: NaiveDate, step: usize) -> Self {
+        Self::Between(Between::new(from, to, step))
+    }
+
+    pub fn powerset(x: Vec<NaiveDate>) -> Self {
+        Self::Powerset(Powerset::new(x))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DateFormatter(String);
