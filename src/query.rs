@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
@@ -6,8 +8,8 @@ use crate::{counter::Counter, parameter::*};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Query {
     url: String,
-    query: Vec<QueryParameter>,
-    param: UrlParameter,
+    query: HashMap<String, Value>,
+    param: HashMap<String, Value>,
 }
 
 impl IntoIterator for Query {
@@ -27,8 +29,8 @@ impl IntoIterator for Query {
         }
         for q in self.query {
             vec.push(
-                q.into_iter()
-                    .map(|x| Type::Query(x.0, x.1))
+                q.1.into_iter()
+                    .map(|x| Type::Query(q.0.clone(), x))
                     .collect_vec()
                     .into_iter(),
             );
@@ -42,7 +44,7 @@ impl IntoIterator for Query {
 }
 
 #[derive(Debug, Clone)]
-pub enum Type {
+enum Type {
     Query(String, String),
     Param(String, String),
 }
@@ -77,40 +79,41 @@ impl Iterator for Iter {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use crate::parameter::{int::IntValueFactory, string::StringValueFactory, *};
 
     use super::Query;
 
     #[test]
     fn into_iter() {
-        let mut p = HashMap::default();
-        p.insert(
-            String::from("id"),
-            Value::int(IntValueFactory::between(1, 2, 1)),
-        );
-        let q = Query {
+        let query = Query {
             url: String::from("http://example.com/{id}"),
             query: vec![
-                QueryParameter::new(
-                    "filter[foo][]",
+                (
+                    String::from("filter[foo][]"),
                     Value::string(StringValueFactory::choice(&vec![
                         String::from("a"),
                         String::from("b"),
                     ])),
                 ),
-                QueryParameter::new(
-                    "filter[bar][]",
+                (
+                    String::from("filter[bar][]"),
                     Value::string(StringValueFactory::choice(&vec![
                         String::from("a"),
                         String::from("b"),
                     ])),
                 ),
-            ],
-            param: p,
+            ]
+            .into_iter()
+            .collect(),
+            param: vec![(
+                String::from("id"),
+                Value::int(IntValueFactory::between(1, 2, 1)),
+            )]
+            .into_iter()
+            .collect(),
         };
-        let mut urls = q.into_iter();
+
+        let mut urls = query.into_iter();
         assert_eq!(
             urls.next(),
             Some(String::from(
@@ -159,6 +162,7 @@ mod tests {
                 "http://example.com/2?filter[foo][]=b&filter[bar][]=b"
             ))
         );
+
         assert_eq!(urls.next(), None);
     }
 }
