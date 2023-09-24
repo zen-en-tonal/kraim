@@ -1,19 +1,17 @@
-pub mod bool;
-pub mod date;
-pub mod float;
-pub mod int;
-pub mod string;
+mod bool;
+mod date;
+mod float;
+mod int;
+mod string;
+
+pub use bool::*;
+pub use date::*;
+pub use float::*;
+pub use int::*;
+pub use string::*;
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-
-use self::{
-    bool::{BoolFormatter, BoolValueFactory},
-    date::{DateFormatter, DateValueFactory},
-    float::{FloatFormatter, FloatValueFactory},
-    int::{IntFormatter, IntValueFactory},
-    string::{StringFormatter, StringValueFactory},
-};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]

@@ -79,7 +79,7 @@ impl<'a> Iterator for Iter<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::parameter::{int::IntValueFactory, string::StringValueFactory, *};
+    use crate::parameter::*;
 
     use super::Query;
 
@@ -159,7 +159,6 @@ mod tests {
                 "http://example.com/2?filter[foo][]=b&filter[bar][]=b"
             ))
         );
-
         assert_eq!(urls.next(), None);
     }
 }
