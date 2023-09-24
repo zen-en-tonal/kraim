@@ -8,7 +8,7 @@ use crate::{counter::Counter, parameter::*};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Query<'a> {
     url: &'a str,
-    query: HashMap<&'a str, Value>,
+    query: Vec<(&'a str, Value)>,
     param: HashMap<&'a str, Value>,
 }
 
