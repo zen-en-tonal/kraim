@@ -96,15 +96,13 @@ mod tests {
                     ])),
                 ),
                 (
-                    "filter[bar][]",
+                    "filter[foo][]",
                     Value::string(StringValueFactory::choice(&vec![
                         String::from("a"),
                         String::from("b"),
                     ])),
                 ),
-            ]
-            .into_iter()
-            .collect(),
+            ],
             param: vec![("id", Value::int(IntValueFactory::between(1, 2, 1)))]
                 .into_iter()
                 .collect(),
@@ -114,49 +112,49 @@ mod tests {
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/1?filter[foo][]=a&filter[bar][]=a"
+                "http://example.com/1?filter[foo][]=a&filter[foo][]=a"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/2?filter[foo][]=a&filter[bar][]=a"
+                "http://example.com/2?filter[foo][]=a&filter[foo][]=a"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/1?filter[foo][]=b&filter[bar][]=a"
+                "http://example.com/1?filter[foo][]=b&filter[foo][]=a"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/2?filter[foo][]=b&filter[bar][]=a"
+                "http://example.com/2?filter[foo][]=b&filter[foo][]=a"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/1?filter[foo][]=a&filter[bar][]=b"
+                "http://example.com/1?filter[foo][]=a&filter[foo][]=b"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/2?filter[foo][]=a&filter[bar][]=b"
+                "http://example.com/2?filter[foo][]=a&filter[foo][]=b"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/1?filter[foo][]=b&filter[bar][]=b"
+                "http://example.com/1?filter[foo][]=b&filter[foo][]=b"
             ))
         );
         assert_eq!(
             urls.next(),
             Some(String::from(
-                "http://example.com/2?filter[foo][]=b&filter[bar][]=b"
+                "http://example.com/2?filter[foo][]=b&filter[foo][]=b"
             ))
         );
         assert_eq!(urls.next(), None);
