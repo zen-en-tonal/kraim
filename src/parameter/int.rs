@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-use super::{Between, Choice, Placeholder, Powerset};
+use super::{Between, Choice, Placeholder};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -9,7 +9,6 @@ pub enum IntValueFactory {
     Scala(i32),
     Choice(Choice<Vec<i32>>),
     Between(Between<i32, usize>),
-    Powerset(Powerset<i32>),
 }
 
 impl IntValueFactory {
@@ -23,10 +22,6 @@ impl IntValueFactory {
 
     pub fn between(from: i32, to: i32, step: usize) -> Self {
         Self::Between(Between::new(from, to, step))
-    }
-
-    pub fn powerset(x: Vec<i32>) -> Self {
-        Self::Powerset(Powerset::new(x))
     }
 }
 
@@ -59,12 +54,6 @@ impl IntoIterator for Placeholder<IntValueFactory, IntFormatter> {
                 .into_iter(),
             IntValueFactory::Between(b) => b
                 .into_iter()
-                .map(|x| x.to_string())
-                .collect_vec()
-                .into_iter(),
-            IntValueFactory::Powerset(p) => p
-                .into_iter()
-                .flatten()
                 .map(|x| x.to_string())
                 .collect_vec()
                 .into_iter(),

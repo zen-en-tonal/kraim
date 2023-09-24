@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-use super::{Between, Choice, Placeholder, Powerset};
+use super::{Between, Choice, Placeholder};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -10,7 +10,6 @@ pub enum DateValueFactory {
     Scala(NaiveDate),
     Choice(Choice<Vec<NaiveDate>>),
     Between(Between<NaiveDate, usize>),
-    Powerset(Powerset<NaiveDate>),
 }
 
 impl DateValueFactory {
@@ -24,10 +23,6 @@ impl DateValueFactory {
 
     pub fn between(from: NaiveDate, to: NaiveDate, step: usize) -> Self {
         Self::Between(Between::new(from, to, step))
-    }
-
-    pub fn powerset(x: Vec<NaiveDate>) -> Self {
-        Self::Powerset(Powerset::new(x))
     }
 }
 
@@ -56,12 +51,6 @@ impl IntoIterator for Placeholder<DateValueFactory, DateFormatter> {
                 .into_iter(),
             DateValueFactory::Between(b) => b
                 .into_iter()
-                .map(|x| format(self.format.clone(), x))
-                .collect_vec()
-                .into_iter(),
-            DateValueFactory::Powerset(p) => p
-                .into_iter()
-                .flatten()
                 .map(|x| format(self.format.clone(), x))
                 .collect_vec()
                 .into_iter(),

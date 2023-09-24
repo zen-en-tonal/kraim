@@ -1,14 +1,12 @@
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-use super::{Choice, Placeholder, Powerset};
+use super::{Choice, Placeholder};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum StringValueFactory {
     Scala(String),
     Choice(Choice<Vec<String>>),
-    Powerset(Powerset<String>),
 }
 
 impl StringValueFactory {
@@ -18,10 +16,6 @@ impl StringValueFactory {
 
     pub fn choice(vec: &Vec<String>) -> StringValueFactory {
         Self::Choice(Choice(vec.clone()))
-    }
-
-    pub fn powerset(vec: &Vec<String>) -> StringValueFactory {
-        Self::Powerset(Powerset(vec.clone()))
     }
 }
 
@@ -34,7 +28,6 @@ impl IntoIterator for Placeholder<StringValueFactory, StringFormatter> {
         match self.factory {
             StringValueFactory::Scala(s) => vec![s].into_iter(),
             StringValueFactory::Choice(s) => s.into_iter(),
-            StringValueFactory::Powerset(s) => s.into_iter().flatten().collect_vec().into_iter(),
         }
     }
 

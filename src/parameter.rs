@@ -10,7 +10,6 @@ pub use float::*;
 pub use int::*;
 pub use string::*;
 
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -104,46 +103,5 @@ pub struct Between<T, Step> {
 impl<T, Step> Between<T, Step> {
     pub fn new(from: T, to: T, step: Step) -> Self {
         Self { from, to, step }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Powerset<T>(Vec<T>);
-
-impl<T> Powerset<T> {
-    pub fn new(vec: Vec<T>) -> Self {
-        Powerset(vec)
-    }
-}
-
-impl<T> IntoIterator for Powerset<T>
-where
-    T: Clone,
-{
-    type Item = Vec<T>;
-
-    type IntoIter = itertools::Powerset<std::vec::IntoIter<T>>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter().powerset()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-
-    use crate::parameter::Powerset;
-
-    #[test]
-    fn powerset() {
-        let mut powerset = Powerset(vec![1, 2, 3]).into_iter();
-        assert_eq!(powerset.next(), Some(vec![]));
-        assert_eq!(powerset.next(), Some(vec![1]));
-        assert_eq!(powerset.next(), Some(vec![2]));
-        assert_eq!(powerset.next(), Some(vec![3]));
-        assert_eq!(powerset.next(), Some(vec![1, 2]));
-        assert_eq!(powerset.next(), Some(vec![1, 3]));
-        assert_eq!(powerset.next(), Some(vec![2, 3]));
-        assert_eq!(powerset.next(), Some(vec![1, 2, 3]));
     }
 }
