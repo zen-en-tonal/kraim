@@ -6,23 +6,23 @@ use serde::{Deserialize, Serialize};
 use crate::{counter::Counter, parameter::*};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Query {
-    url: String,
-    query: HashMap<String, Value>,
-    param: HashMap<String, Value>,
+pub struct Query<'a> {
+    url: &'a str,
+    query: HashMap<&'a str, Value>,
+    param: HashMap<&'a str, Value>,
 }
 
-impl IntoIterator for Query {
+impl<'a> IntoIterator for Query<'a> {
     type Item = String;
 
-    type IntoIter = Iter;
+    type IntoIter = Iter<'a>;
 
     fn into_iter(self) -> Self::IntoIter {
         let mut vec = vec![];
         for p in self.param {
             vec.push(
                 p.1.into_iter()
-                    .map(|x| Type::Param(p.0.clone(), x))
+                    .map(|x| Type::Param(p.0.to_owned(), x))
                     .collect_vec()
                     .into_iter(),
             );
@@ -30,7 +30,7 @@ impl IntoIterator for Query {
         for q in self.query {
             vec.push(
                 q.1.into_iter()
-                    .map(|x| Type::Query(q.0.clone(), x))
+                    .map(|x| Type::Query(q.0.to_owned(), x))
                     .collect_vec()
                     .into_iter(),
             );
@@ -49,18 +49,18 @@ enum Type {
     Param(String, String),
 }
 
-pub struct Iter {
-    url: String,
+pub struct Iter<'a> {
+    url: &'a str,
     inner: Counter<std::vec::IntoIter<Type>>,
 }
 
-impl Iterator for Iter {
+impl<'a> Iterator for Iter<'a> {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(values) = self.inner.next() {
             let mut querys = vec![];
-            let mut url = self.url.clone();
+            let mut url = self.url.to_string();
             for v in values {
                 match v {
                     Type::Query(key, value) => querys.push(format!("{}={}", key, value)),
@@ -86,17 +86,17 @@ mod tests {
     #[test]
     fn into_iter() {
         let query = Query {
-            url: String::from("http://example.com/{id}"),
+            url: "http://example.com/{id}",
             query: vec![
                 (
-                    String::from("filter[foo][]"),
+                    "filter[foo][]",
                     Value::string(StringValueFactory::choice(&vec![
                         String::from("a"),
                         String::from("b"),
                     ])),
                 ),
                 (
-                    String::from("filter[bar][]"),
+                    "filter[bar][]",
                     Value::string(StringValueFactory::choice(&vec![
                         String::from("a"),
                         String::from("b"),
@@ -105,12 +105,9 @@ mod tests {
             ]
             .into_iter()
             .collect(),
-            param: vec![(
-                String::from("id"),
-                Value::int(IntValueFactory::between(1, 2, 1)),
-            )]
-            .into_iter()
-            .collect(),
+            param: vec![("id", Value::int(IntValueFactory::between(1, 2, 1)))]
+                .into_iter()
+                .collect(),
         };
 
         let mut urls = query.into_iter();
