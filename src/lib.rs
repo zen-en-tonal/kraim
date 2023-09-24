@@ -1,6 +1,6 @@
 mod counter;
 mod parameter;
-mod query;
+mod url;
 
 pub use parameter::*;
-pub use query::*;
+pub use url::*;

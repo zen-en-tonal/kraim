@@ -6,13 +6,13 @@ use serde::{Deserialize, Serialize};
 use crate::{counter::Counter, parameter::*};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Query<'a> {
+pub struct Urls<'a> {
     url: &'a str,
     query: Vec<(&'a str, Value)>,
     param: HashMap<&'a str, Value>,
 }
 
-impl<'a> IntoIterator for Query<'a> {
+impl<'a> IntoIterator for Urls<'a> {
     type Item = String;
 
     type IntoIter = Iter<'a>;
@@ -81,11 +81,11 @@ impl<'a> Iterator for Iter<'a> {
 mod tests {
     use crate::parameter::*;
 
-    use super::Query;
+    use super::Urls;
 
     #[test]
     fn into_iter() {
-        let query = Query {
+        let query = Urls {
             url: "http://example.com/{id}",
             query: vec![
                 (
